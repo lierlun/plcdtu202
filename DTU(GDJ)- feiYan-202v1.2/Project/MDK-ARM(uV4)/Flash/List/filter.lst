@@ -1,0 +1,42 @@
+L 1 "..\..\User\filter.c"
+N#include "filter.h"
+L 1 "..\..\User\filter.h" 1
+N#ifndef __FILTER__H
+N#define __FILTER__H
+N
+Nextern short  GetMedianNum(short * bArray, int iFilterLen);
+N#endif
+L 2 "..\..\User\filter.c" 2
+N
+Nshort  GetMedianNum(short * bArray, int iFilterLen)  
+N{  
+N    int   i,j;
+N    short bTemp;  
+N      
+N    //冒泡法排序
+N    for (j = 0; j < iFilterLen - 1; j ++)  
+N    {  
+N        for (i = 0; i < iFilterLen - j - 1; i ++)  
+N        {  
+N            if (bArray[i] > bArray[i + 1])  
+N            {   
+N                bTemp = bArray[i];  
+N                bArray[i] = bArray[i + 1];  
+N                bArray[i + 1] = bTemp;  
+N            }  
+N        }  
+N    }  
+N    
+N		//判断是奇数还是偶数
+N    if ((iFilterLen & 1) > 0)  
+N    {  
+N        
+N        bTemp = bArray[(iFilterLen + 1) / 2];  
+N    }  
+N    else  
+N    {  
+N        bTemp = (bArray[iFilterLen / 2] + bArray[iFilterLen / 2 + 1]) / 2;  
+N    }  
+N  
+N    return bTemp;  
+N}  

@@ -1,0 +1,262 @@
+L 1 "..\..\Malloc\GprsQueue.c"
+N#include "GprsQueue.h"
+L 1 "..\..\Malloc\GprsQueue.h" 1
+N#ifndef _GPRS_QUEUE_H
+N#define _GPRS_QUEUE_H
+N//定义函数结果状态码
+N#ifndef OK
+N#define OK         1
+N#endif
+N
+N#ifndef ERROR
+N#define ERROR      0
+N#endif
+N
+N#ifndef TRUE
+N#define TRUE       1
+N#endif
+N
+N#ifndef FALSE
+N#define FALSE      0
+N#endif
+N
+N//定义循环队列空间大小
+N#define GPRS_QUEUESIZE 20
+N
+N#define BUF_LEN        512
+Ntypedef struct
+N{ 
+N	char cmd;          //命令
+N	char trycnt;       //已经重发次数
+N	char addr;
+N	int   len;
+N	char  buf[BUF_LEN];
+X	char  buf[512];
+N}GPRS_BUF;
+N
+N//定义数据类型
+Ntypedef GPRS_BUF       ElemType_G ;
+N//定义程序返回状态类型
+Ntypedef unsigned char  State;
+N
+N//循环队列存储结构
+Ntypedef struct 
+N{
+N    ElemType_G data[GPRS_QUEUESIZE];//存储队列元素
+X    ElemType_G data[20];
+N    int        front;               //队列头指针
+N    int        rear;                //队列尾指针
+N    int        count;               //队列元素个数
+N}GPRS_CircleQueue;
+N
+Nextern GPRS_CircleQueue g_GPRSQueue;
+N
+NState GPRS_InitQueue(GPRS_CircleQueue *queue);
+NState GPRS_IsQueueEmpty(GPRS_CircleQueue *queue);
+NState GPRS_IsQueueFull(GPRS_CircleQueue *queue);
+NState GPRS_EnQueue(GPRS_CircleQueue *queue, ElemType_G e);
+NState GPRS_DeQueue(GPRS_CircleQueue *queue,ElemType_G *e);
+NState GPRS_GetHead(GPRS_CircleQueue *queue,ElemType_G *e);
+NState GPRS_SetHead(GPRS_CircleQueue *queue,ElemType_G e);
+NState GPRS_ClearQueue(GPRS_CircleQueue *queue );
+Nint   GPRS_GetLength(GPRS_CircleQueue *queue);
+N#endif
+L 2 "..\..\Malloc\GprsQueue.c" 2
+NGPRS_CircleQueue g_GPRSQueue;
+N
+N/*---------------------------InitQueue----------------------------------------
+N *  功能：    初始化队列
+N *  参数:     queue：需要初始化的队列                   
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+NState GPRS_InitQueue(GPRS_CircleQueue *queue)
+N{
+N    queue->front = 0; 
+N	  queue->rear = 0;
+N    queue->count = 0;
+N    return OK;
+X    return 1;
+N}
+N
+N//判断队列为空和满
+N//1、使用计数器count,队列为空和满时，front都等于rear
+N//2、少用一个元素的空间，约定队列满时：(rear+1)%QUEUESIZE=front,为空时front=rear
+N//rear指向队尾元素的下一个位置，始终为空；队列的长度为(rear-front+QUEUESIZE)%QUEUESIZE
+N
+N/*---------------------------IsQueueEmpty------------------------------------
+N *  功能：    判断队列是否为空
+N *  参数:     queue：指向相应队列的指针                   
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+NState GPRS_IsQueueEmpty(GPRS_CircleQueue *queue)
+N{
+N    if(queue->count == 0)
+N        return TRUE;
+X        return 1;
+N    else
+N        return FALSE;
+X        return 0;
+N}
+N
+N/*---------------------------IsQueueFull------------------------------------
+N *  功能：    判断队列是否满
+N *  参数:     queue：指向相应队列的指针                   
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+NState GPRS_IsQueueFull(GPRS_CircleQueue *queue)
+N{
+N    if(queue->count == GPRS_QUEUESIZE)
+X    if(queue->count == 20)
+N        return TRUE;
+X        return 1;
+N    else
+N        return FALSE;
+X        return 0;
+N}
+N
+N/*---------------------------EnQueue----------------------------------------
+N *  功能：    判断队列是否满
+N *  参数:     queue：指向相应队列的指针 
+N *            e:需要入队的元素                  
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+NState GPRS_EnQueue(GPRS_CircleQueue *queue, ElemType_G e)
+N{
+N    //验证队列是否已满
+N    if(queue->count == GPRS_QUEUESIZE)
+X    if(queue->count == 20)
+N       return ERROR;
+X       return 0;
+N    //入队
+N    queue->data[queue->rear] = e;
+N    //对尾指针后移
+N    queue->rear = (queue->rear + 1) % GPRS_QUEUESIZE;
+X    queue->rear = (queue->rear + 1) % 20;
+N    //更新队列长度
+N    queue->count++;
+N    return OK;
+X    return 1;
+N
+N}
+N
+N/*---------------------------DeQueue----------------------------------------
+N *  功能：    出队
+N *  参数:     queue：指向相应队列的指针 
+N *            e:指向取出元素的指针                  
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+NState GPRS_DeQueue(GPRS_CircleQueue *queue,ElemType_G *e)
+N{
+N    //判断队列是否为空
+N    if(queue->count == 0)
+N	  return ERROR;
+X	  return 0;
+N    //保存返回值
+N    *e = queue->data[queue->front];
+N    //更新队头指针
+N    queue->front = (queue->front + 1) % GPRS_QUEUESIZE;
+X    queue->front = (queue->front + 1) % 20;
+N    //更新队列长度
+N    queue->count--;
+N    return OK;
+X    return 1;
+N
+N}
+N
+N
+N/*---------------------------GetHead----------------------------------------
+N *  功能：    获取队列的队首元素
+N *  参数:     queue：指向相应队列的指针 
+N *            e:指向队首元素的指针                  
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+NState GPRS_GetHead(GPRS_CircleQueue *queue,ElemType_G *e)
+N{
+N    //判断队列是否为空
+N    if(queue->count == 0)
+N	   return ERROR;
+X	   return 0;
+N
+N    *e = queue->data[queue->front];
+N	return OK;
+X	return 1;
+N}
+N
+N/*---------------------------SetHead----------------------------------------
+N *  功能：    设置队列的队首元素
+N *  参数:     queue：指向相应队列的指针 
+N *            e:指向队首元素的指针                  
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+NState GPRS_SetHead(GPRS_CircleQueue *queue,ElemType_G e)
+N{
+N    //判断队列是否为空
+N    if(queue->count == 0)
+N	   return ERROR;
+X	   return 0;
+N
+N    queue->data[queue->front] = e;
+N	return OK;
+X	return 1;
+N}
+N
+N/*---------------------------ClearQueue----------------------------------------
+N *  功能：    清空队列
+N *  参数:     queue：指向相应队列的指针                 
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+NState GPRS_ClearQueue(GPRS_CircleQueue *queue )
+N{
+N    queue->front = 0;
+N	  queue->rear = 0;
+N    queue->count = 0;
+N    return OK;
+X    return 1;
+N
+N}
+N
+N/*---------------------------GetLength----------------------------------------
+N *  功能：    获取队列的长度
+N *  参数:     queue：指向相应队列的指针                 
+N *  返回:     成功返回OK
+N *  编写时间：2014年4月22日
+N *  编写人：  张永强
+N *  修改时间：
+N *  修改人：
+N *---------------------------------------------------------------------------*/
+Nint GPRS_GetLength(GPRS_CircleQueue *queue)
+N{
+N    return queue->count;
+N}

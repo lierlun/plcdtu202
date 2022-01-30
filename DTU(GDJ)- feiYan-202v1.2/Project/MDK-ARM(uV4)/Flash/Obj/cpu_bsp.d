@@ -1,0 +1,11 @@
+.\Flash\Obj\cpu_bsp.o: ..\..\User\cpu_bsp.c
+.\Flash\Obj\cpu_bsp.o: ..\..\uCOS-III\uC-CPU\cpu_core.h
+.\Flash\Obj\cpu_bsp.o: ..\..\uCOS-III\uC-CPU\ARM-Cortex-M3\RealView\cpu.h
+.\Flash\Obj\cpu_bsp.o: ..\..\uCOS-III\uC-CPU\cpu_def.h
+.\Flash\Obj\cpu_bsp.o: ..\..\User\cpu_cfg.h
+.\Flash\Obj\cpu_bsp.o: ..\..\uCOS-III\uC-LIB\lib_def.h
+.\Flash\Obj\cpu_bsp.o: ..\..\uCOS-III\uC-LIB\lib_mem.h
+.\Flash\Obj\cpu_bsp.o: ..\..\uCOS-III\uC-CPU\cpu_core.h
+.\Flash\Obj\cpu_bsp.o: ..\..\User\lib_cfg.h
+.\Flash\Obj\cpu_bsp.o: ..\..\uCOS-III\uC-LIB\lib_str.h
+.\Flash\Obj\cpu_bsp.o: ..\..\uCOS-III\uC-LIB\lib_ascii.h
